@@ -46,7 +46,8 @@ export default function TrackBagScreen() {
         placeholder="Tracking Number"
         value={trackingNumber}
         onChangeText={setTrackingNumber}
-        style={[styles.input, { borderColor: isDarkMode ? '#333' : '#ccc', color: isDarkMode ? '#fff' : '#000', placeholderTextColor: isDarkMode ? '#aaa' : '#888' }]}
+        style={[styles.input, { borderColor: isDarkMode ? '#333' : '#ccc', color: isDarkMode ? '#fff' : '#000' }]}
+        placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
       />
       <Button title="Scan Bag Tag Barcode" onPress={() => setShowScanner(true)} color={theme.colors.primary} />
       <Button title="Track Bag" onPress={handleTrackBag} color={theme.colors.primary} />
@@ -93,6 +94,9 @@ const styles = StyleSheet.create({
     borderRadius: 5, // Rounded edges
     marginBottom: 12,
     paddingHorizontal: 8,
+    // Adding a flex to align text properly within the input field
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   scannerContainer: {
     ...StyleSheet.absoluteFillObject,
