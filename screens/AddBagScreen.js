@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, Dimensions } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { useTheme } from '../components/ThemeContext'; // Import useTheme
 
 const generateTrackingCode = (airportCode) => {
   const randomNumber = Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit number
@@ -8,6 +9,7 @@ const generateTrackingCode = (airportCode) => {
 };
 
 export default function AddBagScreen({ navigation }) {
+  const { isDarkMode, theme } = useTheme(); // Access theme
   const [trackingNumber, setTrackingNumber] = useState('');
   const [location, setLocation] = useState('');
   const [flight, setFlight] = useState('');
@@ -26,9 +28,13 @@ export default function AddBagScreen({ navigation }) {
 
   const handleBarCodeScanned = ({ data }) => {
     setScanned(true);
-    setTrackingNumber(data);
+    // Simulate processing of scanned data and filling out form fields
+    const [scannedTrackingNumber, scannedLocation, scannedFlight] = data.split('|'); // Adjust based on actual data format
+    setTrackingNumber(scannedTrackingNumber || '');
+    setLocation(scannedLocation || '');
+    setFlight(scannedFlight || '');
     setShowScanner(false);
-    Alert.alert('Barcode Scanned', `Tracking Number: ${data}`);
+    Alert.alert('Barcode Scanned', `Tracking Number: ${scannedTrackingNumber}`);
   };
 
   const handleGenerateTrackingCode = () => {
@@ -52,43 +58,51 @@ export default function AddBagScreen({ navigation }) {
   };
 
   if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
+    return <Text style={{ color: theme.colors.text }}>Requesting for camera permission</Text>;
   }
   if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+    return <Text style={{ color: theme.colors.text }}>No access to camera</Text>;
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Add a New Bag</Text>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <Text style={[styles.title, { color: theme.colors.titleText }]}>Add a New Bag</Text>
       <TextInput
         placeholder="Location"
         value={location}
         onChangeText={setLocation}
-        style={styles.input}
+        style={[styles.input, { borderColor: isDarkMode ? '#333' : '#ccc', color: isDarkMode ? '#fff' : '#000' }]}
+        placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
       />
       <TextInput
         placeholder="Flight"
         value={flight}
         onChangeText={setFlight}
-        style={styles.input}
+        style={[styles.input, { borderColor: isDarkMode ? '#333' : '#ccc', color: isDarkMode ? '#fff' : '#000' }]}
+        placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
       />
       <TextInput
         placeholder="Airport Code (e.g., ATL)"
         value={airportCode}
         onChangeText={setAirportCode}
-        style={styles.input}
+        style={[styles.input, { borderColor: isDarkMode ? '#333' : '#ccc', color: isDarkMode ? '#fff' : '#000' }]}
+        placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
       />
-      <Button title="Generate Tracking Code" onPress={handleGenerateTrackingCode} />
+      <Button title="Generate Tracking Code" onPress={handleGenerateTrackingCode} color={theme.colors.primary} />
       {generatedTrackingCode ? (
         <TextInput
           placeholder="Tracking Number"
           value={generatedTrackingCode}
-          style={styles.input}
+          style={[styles.input, { borderColor: isDarkMode ? '#333' : '#ccc', color: isDarkMode ? '#fff' : '#000' }]}
           editable={false}
+          placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
         />
       ) : null}
-      <Button title="Scan Bag Tag Barcode" onPress={() => setShowScanner(true)} />
+      {!showScanner && (
+        <Button title="Add Bag" onPress={handleAddBag} color={theme.colors.primary} />
+      )}
+      <Button title="Scan Bag Tag Barcode" onPress={() => setShowScanner(true)} color={theme.colors.primary} />
+      
       {showScanner && (
         <View style={styles.scannerContainer}>
           <BarCodeScanner
@@ -104,10 +118,9 @@ export default function AddBagScreen({ navigation }) {
             </View>
             <View style={styles.bottomOverlay} />
           </View>
-          {scanned && <Button title="Tap to Scan Again" onPress={() => setScanned(false)} />}
+          {scanned && <Button title="Tap to Scan Again" onPress={() => setScanned(false)} color={theme.colors.primary} />}
         </View>
       )}
-      <Button title="Add Bag" onPress={handleAddBag} />
     </View>
   );
 }
@@ -127,18 +140,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   input: {
-    width: '100%',
-    padding: 10,
-    marginBottom: 10,
+    height: 40,
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-  },
-  generatedTrackingCode: {
-    fontSize: 16,
-    marginBottom: 20,
-    textAlign: 'center',
-    color: 'blue',
+    borderRadius: 5, // Rounded edges
+    marginBottom: 12,
+    paddingHorizontal: 8,
   },
   scannerContainer: {
     ...StyleSheet.absoluteFillObject,

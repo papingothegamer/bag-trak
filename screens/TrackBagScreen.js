@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, Dimensions } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { useTheme } from '../components/ThemeContext'; // Import useTheme
 
 export default function TrackBagScreen() {
   const [trackingNumber, setTrackingNumber] = useState('');
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
+  const { theme, isDarkMode } = useTheme(); // Access theme and dark mode
 
   useEffect(() => {
     (async () => {
@@ -31,23 +33,23 @@ export default function TrackBagScreen() {
   };
 
   if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
+    return <Text style={{ color: theme.colors.text }}>Requesting for camera permission</Text>;
   }
   if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+    return <Text style={{ color: theme.colors.text }}>No access to camera</Text>;
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Track Your Bag</Text>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <Text style={[styles.title, { color: theme.colors.text }]}>Track Your Bag</Text>
       <TextInput
         placeholder="Tracking Number"
         value={trackingNumber}
         onChangeText={setTrackingNumber}
-        style={styles.input}
+        style={[styles.input, { borderColor: isDarkMode ? '#333' : '#ccc', color: isDarkMode ? '#fff' : '#000', placeholderTextColor: isDarkMode ? '#aaa' : '#888' }]}
       />
-      <Button title="Scan Bag Tag Barcode" onPress={() => setShowScanner(true)} />
-      <Button title="Track Bag" onPress={handleTrackBag} />
+      <Button title="Scan Bag Tag Barcode" onPress={() => setShowScanner(true)} color={theme.colors.primary} />
+      <Button title="Track Bag" onPress={handleTrackBag} color={theme.colors.primary} />
       
       {showScanner && (
         <View style={styles.scannerContainer}>
@@ -64,7 +66,7 @@ export default function TrackBagScreen() {
             </View>
             <View style={styles.bottomOverlay} />
           </View>
-          {scanned && <Button title="Tap to Scan Again" onPress={() => setScanned(false)} />}
+          {scanned && <Button title="Tap to Scan Again" onPress={() => setScanned(false)} color={theme.colors.primary} />}
         </View>
       )}
     </View>
@@ -86,12 +88,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   input: {
-    width: '100%',
-    padding: 10,
-    marginBottom: 10,
+    height: 40,
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
+    borderRadius: 5, // Rounded edges
+    marginBottom: 12,
+    paddingHorizontal: 8,
   },
   scannerContainer: {
     ...StyleSheet.absoluteFillObject,

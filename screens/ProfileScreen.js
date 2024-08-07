@@ -1,140 +1,81 @@
-import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, Alert, Modal, TextInput } from 'react-native';
-import { CommonActions } from '@react-navigation/native';
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { useAuth } from '../hooks/useAuth';
+import { useTheme } from '../components/ThemeContext';
 
 const ProfileScreen = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [modalVisible, setModalVisible] = useState(false);
+  const { logout, deleteUser } = useAuth(); 
+  const { isDarkMode, theme } = useTheme(); // Ensure theme is accessed here
 
-  const handleLogout = () => {
-    Alert.alert(
-      "Confirm Logout",
-      "Are you sure you want to logout?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
-        {
-          text: "OK",
-          onPress: () => {
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: 'Login' }],
-              })
-            );
-          }
-        }
-      ]
-    );
+  const handleLogout = async () => {
+    try {
+      await logout(); // Call the logout function from useAuth
+      navigation.navigate('Login'); // Redirect to Login screen
+    } catch (error) {
+      Alert.alert('Logout Error', 'An error occurred during logout.');
+    }
   };
 
   const handleDeleteAccount = () => {
     Alert.alert(
-      "Confirm Deletion",
-      "Are you sure you want to delete your account? This action cannot be undone.",
+      'Confirm Delete',
+      'Are you sure you want to delete your account? This action cannot be undone.',
       [
         {
-          text: "Cancel",
-          style: "cancel"
+          text: 'Cancel',
+          style: 'cancel',
         },
         {
-          text: "OK",
-          onPress: () => setModalVisible(true)
-        }
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteUser(); // Call the deleteUser function from useAuth
+              Alert.alert('Account Deleted', 'Your account has been deleted.');
+              navigation.navigate('Login'); // Redirect to Login screen
+            } catch (error) {
+              Alert.alert('Delete Error', 'An error occurred while deleting the account.');
+            }
+          },
+        },
       ]
     );
   };
 
-  const handleEmailSubmit = () => {
-    // Logic to send a confirmation email for account deletion
-    // Example:
-    // fetch('https://api.example.com/delete-account', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ email }),
-    // })
-    // .then(response => response.json())
-    // .then(data => {
-    //   console.log('Success:', data);
-    //   navigation.dispatch(
-    //     CommonActions.reset({
-    //       index: 0,
-    //       routes: [{ name: 'Login' }],
-    //     })
-    //   );
-    // })
-    // .catch((error) => {
-    //   console.error('Error:', error);
-    // });
-
-    // Close the modal and navigate to Login screen
-    setModalVisible(false);
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{ name: 'Login' }],
-      })
-    );
-  };
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Profile Screen</Text>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <Text style={[styles.title, { color: theme.colors.text }]}>Profile Settings</Text>
 
-      <Button
-        title="Account Settings"
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: theme.colors.primary }]}
         onPress={() => navigation.navigate('AccountSettings')}
-      />
-      <Button
-        title="User Settings"
-        onPress={() => navigation.navigate('UserSettings')}
-      />
-      <Button
-        title="Notification Settings"
-        onPress={() => navigation.navigate('NotificationSettings')}
-      />
-
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Logout"
-          onPress={handleLogout}
-        />
-        <Button
-          title="Delete Account"
-          onPress={handleDeleteAccount}
-        />
-      </View>
-
-      {/* Modal for email input */}
-      <Modal
-        transparent={true}
-        animationType="slide"
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Enter your email to confirm account deletion</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              keyboardType="email-address"
-              value={email}
-              onChangeText={setEmail}
-            />
-            <Button
-              title="Submit"
-              onPress={handleEmailSubmit}
-            />
-            <Button
-              title="Cancel"
-              onPress={() => setModalVisible(false)}
-            />
-          </View>
-        </View>
-      </Modal>
+        <Text style={[styles.buttonText, { color: theme.colors.buttonText }]}>Account Settings</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: theme.colors.primary }]}
+        onPress={() => navigation.navigate('UserSettings')}
+      >
+        <Text style={[styles.buttonText, { color: theme.colors.buttonText }]}>User Settings</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: theme.colors.primary }]}
+        onPress={() => navigation.navigate('NotificationSettings')}
+      >
+        <Text style={[styles.buttonText, { color: theme.colors.buttonText }]}>Notification Settings</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: theme.colors.danger }]}
+        onPress={handleLogout}
+      >
+        <Text style={[styles.buttonText, { color: isDarkMode ? 'white' : 'black' }]}>Logout</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: theme.colors.danger }]}
+        onPress={handleDeleteAccount}
+      >
+        <Text style={[styles.buttonText, { color: 'red' }]}>Delete Account</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -142,39 +83,20 @@ const ProfileScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    padding: 20,
+    padding: 16,
   },
   title: {
     fontSize: 24,
-    marginBottom: 20,
-    textAlign: 'center',
+    marginBottom: 16,
   },
-  buttonContainer: {
-    marginTop: 20,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalContent: {
-    width: '80%',
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-  },
-  modalTitle: {
-    fontSize: 18,
-    marginBottom: 10,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
+  button: {
     padding: 10,
-    marginBottom: 10,
+    alignItems: 'center',
+    marginBottom: 20,
+    borderRadius: 5,
+  },
+  buttonText: {
+    fontSize: 16,
   },
 });
 

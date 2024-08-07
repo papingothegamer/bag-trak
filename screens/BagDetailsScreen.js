@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
+import { useTheme } from '../components/ThemeContext'; // Import useTheme
 
 export default function BagDetailsScreen({ route, navigation }) {
   const { bagId } = route.params;
@@ -7,12 +8,14 @@ export default function BagDetailsScreen({ route, navigation }) {
   // Replace with real data fetching logic
   const bag = { id: bagId, name: `Bag ${bagId}`, status: 'Checked In', lastLocation: 'JFK Airport' };
 
+  const { theme } = useTheme(); // Access theme
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{bag.name}</Text>
-      <Text style={styles.detail}>Status: {bag.status}</Text>
-      <Text style={styles.detail}>Last Location: {bag.lastLocation}</Text>
-      <Button title="Back to Home" onPress={() => navigation.navigate('Home')} />
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <Text style={[styles.title, { color: theme.colors.text }]}>{bag.name}</Text>
+      <Text style={[styles.detail, { color: theme.colors.text }]}>Status: {bag.status}</Text>
+      <Text style={[styles.detail, { color: theme.colors.text }]}>Last Location: {bag.lastLocation}</Text>
+      <Button title="Back to Home" onPress={() => navigation.navigate('Home')} color={theme.colors.primary} />
     </View>
   );
 }
