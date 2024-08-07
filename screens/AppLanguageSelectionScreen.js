@@ -21,6 +21,7 @@ const AppLanguageSelectionScreen = ({ isVisible, onClose, onSelectLanguage }) =>
             selectedValue={selectedLanguage}
             onValueChange={(itemValue) => setSelectedLanguage(itemValue)}
             style={[styles.picker, { color: theme.colors.text }]}
+            itemStyle={{ color: theme.colors.text }} // Set item color based on theme
           >
             <Picker.Item label="English" value="en" />
             <Picker.Item label="Spanish" value="es" />

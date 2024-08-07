@@ -30,7 +30,7 @@ const LoginScreen = ({ navigation }) => {
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <Text style={[styles.title, { color: theme.colors.text }]}>Login</Text>
       <TextInput
-        style={[styles.input, { borderColor: isDarkMode ? '#333' : '#fff', color: isDarkMode ? '#fff' : '#000' }]}
+        style={[styles.input, { borderColor: isDarkMode ? '#333' : '#ccc', color: isDarkMode ? '#fff' : '#000' }]}
         placeholder="Email"
         placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
         value={email}
@@ -38,7 +38,7 @@ const LoginScreen = ({ navigation }) => {
         keyboardType="email-address"
         autoCapitalize="none"
       />
-      <View style={[styles.passwordContainer, { borderColor:  isDarkMode ? '#333' : '#fff', color: isDarkMode ? '#fff' : '#000'}]}>
+      <View style={[styles.passwordContainer, { borderColor: isDarkMode ? '#333' : '#ccc' }]}>
         <TextInput
           style={[styles.passwordInput, { color: isDarkMode ? '#fff' : '#000' }]}
           placeholder="Password"
@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
   },
   passwordInput: {
     flex: 1,
+    height: '100%', // Ensure it takes full height
   },
   showHideButton: {
     justifyContent: 'center',

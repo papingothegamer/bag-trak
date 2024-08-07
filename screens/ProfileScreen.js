@@ -2,15 +2,21 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../components/ThemeContext';
+import { CommonActions } from '@react-navigation/native';
 
 const ProfileScreen = ({ navigation }) => {
-  const { logout, deleteUser } = useAuth(); 
+  const { logout, deleteUser } = useAuth();
   const { isDarkMode, theme } = useTheme(); // Ensure theme is accessed here
 
   const handleLogout = async () => {
     try {
       await logout(); // Call the logout function from useAuth
-      navigation.navigate('Login'); // Redirect to Login screen
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Login' }],
+        })
+      ); // Redirect to Login screen and reset navigation stack
     } catch (error) {
       Alert.alert('Logout Error', 'An error occurred during logout.');
     }
@@ -32,7 +38,12 @@ const ProfileScreen = ({ navigation }) => {
             try {
               await deleteUser(); // Call the deleteUser function from useAuth
               Alert.alert('Account Deleted', 'Your account has been deleted.');
-              navigation.navigate('Login'); // Redirect to Login screen
+              navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{ name: 'Login' }],
+                })
+              ); // Redirect to Login screen and reset navigation stack
             } catch (error) {
               Alert.alert('Delete Error', 'An error occurred while deleting the account.');
             }
