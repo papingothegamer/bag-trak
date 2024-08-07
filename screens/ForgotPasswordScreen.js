@@ -4,7 +4,7 @@ import { useTheme } from '../components/ThemeContext'; // Import useTheme
 
 export default function ForgotPasswordScreen({ navigation }) {
   const [email, setEmail] = useState('');
-  const { theme } = useTheme(); // Access theme
+  const { theme, isDarkMode } = useTheme(); // Access theme and dark mode
 
   const handleResetPassword = () => {
     alert('Password reset email sent to ' + email);
@@ -18,7 +18,14 @@ export default function ForgotPasswordScreen({ navigation }) {
         placeholder="Enter your email"
         value={email}
         onChangeText={setEmail}
-        style={[styles.input, { borderColor: theme.colors.border }]}
+        style={[
+          styles.input,
+          { 
+            borderColor: isDarkMode ? '#333' : '#ccc', // Border color based on theme
+            color: isDarkMode ? '#fff' : '#000', // Text color based on theme
+          }
+        ]}
+        placeholderTextColor={isDarkMode ? '#aaa' : '#888'} // Placeholder text color based on theme
       />
       <Button title="Reset Password" onPress={handleResetPassword} color={theme.colors.primary} />
       <Button title="Back to Login" onPress={() => navigation.navigate('Login')} color={theme.colors.primary} />

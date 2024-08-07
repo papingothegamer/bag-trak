@@ -8,7 +8,7 @@ export default function SignupScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { signup } = useAuth();
-  const { theme } = useTheme(); // Access theme
+  const { theme, isDarkMode } = useTheme(); // Access theme and dark mode
 
   const handleSignup = () => {
     if (signup(name, email, password)) {
@@ -25,20 +25,41 @@ export default function SignupScreen({ navigation }) {
         placeholder="Name"
         value={name}
         onChangeText={setName}
-        style={[styles.input, { borderColor: theme.colors.border }]}
+        style={[
+          styles.input,
+          {
+            borderColor: isDarkMode ? '#333' : '#ccc', // Border color based on theme
+            color: isDarkMode ? '#fff' : '#000', // Text color based on theme
+          }
+        ]}
+        placeholderTextColor={isDarkMode ? '#aaa' : '#888'} // Placeholder text color based on theme
       />
       <TextInput
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
-        style={[styles.input, { borderColor: theme.colors.border }]}
+        style={[
+          styles.input,
+          {
+            borderColor: isDarkMode ? '#333' : '#ccc', // Border color based on theme
+            color: isDarkMode ? '#fff' : '#000', // Text color based on theme
+          }
+        ]}
+        placeholderTextColor={isDarkMode ? '#aaa' : '#888'} // Placeholder text color based on theme
       />
       <TextInput
         placeholder="Password"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-        style={[styles.input, { borderColor: theme.colors.border }]}
+        style={[
+          styles.input,
+          {
+            borderColor: isDarkMode ? '#333' : '#ccc', // Border color based on theme
+            color: isDarkMode ? '#fff' : '#000', // Text color based on theme
+          }
+        ]}
+        placeholderTextColor={isDarkMode ? '#aaa' : '#888'} // Placeholder text color based on theme
       />
       <Button title="Sign Up" onPress={handleSignup} color={theme.colors.primary} />
       <Button title="Login" onPress={() => navigation.navigate('Login')} color={theme.colors.primary} />
