@@ -70,12 +70,10 @@ npm start
 This will start the Expo development server and open the app in your default browser. You can also use the Expo Go app on your mobile device to scan the QR code and test the app.
 
 
-
 Today's Progress (7 August 2024)
 Enhanced Barcode Scanning Integration
+
 Updated the Add Bag Screen to automatically populate the form fields with scanned data. The viewfinder now directly updates the tracking number, location, and flight details upon successful barcode scan, eliminating the need for manual entry.
-Challenges Faced
-Divergent Git Branches
 
 Issue: Encountered an error while pushing to the remote repository due to divergent branches.
 Fix: Resolved the issue by performing a git pull to integrate remote changes and then handled conflicts by choosing the appropriate merging or rebasing strategy.
@@ -83,6 +81,14 @@ UI Adjustments
 
 Issue: Needed to remove the "Add Bag" button from the viewfinder overlay and ensure that the barcode scanning updates the form fields directly.
 Fix: Updated the AddBagScreen to remove the button from the viewfinder overlay and adjusted the logic to automatically fill out form fields with scanned barcode data.
+
+Issue: Encountered an error while pushing to the remote repository due to divergent branches.
+Fix: Resolved the issue by performing a git pull to integrate remote changes and then handled conflicts by choosing the appropriate merging or rebasing strategy.
+UI Adjustments
+
+Issue: Needed to remove the "Add Bag" button from the viewfinder overlay and ensure that the barcode scanning updates the form fields directly.
+Fix: Updated the AddBagScreen to remove the button from the viewfinder overlay and adjusted the logic to automatically fill out form fields with scanned barcode data.
+
 
 Technologies Used
 React Native - Framework for building native mobile applications
