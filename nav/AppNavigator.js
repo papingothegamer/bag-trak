@@ -8,6 +8,8 @@ import ProfileScreen from '../screens/ProfileScreen';
 import AddBagScreen from '../screens/AddBagScreen';
 import TrackBagScreen from '../screens/TrackBagScreen';
 import AccountSettingsScreen from '../screens/AccountSettingsScreen';
+import EmailVerificationScreen from '../screens/EmailVerificationScreen';
+import PhoneVerificationScreen from '../screens/PhoneVerificationScreen';
 import UserSettingsScreen from '../screens/UserSettingsScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
@@ -37,6 +39,8 @@ const AppNavigator = () => {
       <Stack.Screen name="AddBag" component={AddBagScreen} />
       <Stack.Screen name="TrackBag" component={TrackBagScreen} />
       <Stack.Screen name="AccountSettings" component={AccountSettingsScreen} />
+      <Stack.Screen name="EmailVerification" component={EmailVerificationScreen} />
+      <Stack.Screen name="PhoneVerification" component={PhoneVerificationScreen} />
       <Stack.Screen name="UserSettings" component={UserSettingsScreen} />
       <Stack.Screen name="NotificationSettings" component={NotificationScreen} />
     </Stack.Navigator>

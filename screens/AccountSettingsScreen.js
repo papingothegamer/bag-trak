@@ -10,12 +10,18 @@ const AccountSettingsScreen = ({ navigation }) => {
       <Text style={[styles.title, { color: theme.colors.titleText }]}>Account Settings</Text>
       
       <Text style={[styles.label, { color: theme.colors.text }]}>Email Verification</Text>
-      <TouchableOpacity style={[styles.button, { backgroundColor: theme.colors.primary }]}>
+      <TouchableOpacity 
+        style={[styles.button, { backgroundColor: theme.colors.primary }]}
+        onPress={() => navigation.navigate('EmailVerification')}  // Navigate to EmailVerificationScreen
+      >
         <Text style={[styles.buttonText, { color: theme.colors.buttonText }]}>Verify Email</Text>
       </TouchableOpacity>
       
       <Text style={[styles.label, { color: theme.colors.text }]}>Phone Verification</Text>
-      <TouchableOpacity style={[styles.button, { backgroundColor: theme.colors.primary }]}>
+      <TouchableOpacity 
+        style={[styles.button, { backgroundColor: theme.colors.primary }]}
+        onPress={() => navigation.navigate('PhoneVerification')} // Navigate to PhoneVerificationScreen
+      >
         <Text style={[styles.buttonText, { color: theme.colors.buttonText }]}>Verify Phone</Text>
       </TouchableOpacity>
       
