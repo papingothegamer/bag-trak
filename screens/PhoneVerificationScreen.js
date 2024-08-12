@@ -5,6 +5,7 @@ import { useTheme } from '../components/ThemeContext';
 export default function PhoneVerificationScreen() {
   const [fullPhoneNumber, setFullPhoneNumber] = useState(''); // Combined phone code and number
   const { theme } = useTheme(); // Access theme
+  const isDarkMode = theme.dark; // Check if dark mode is enabled
 
   const handleVerifyPhone = () => {
     // Validate the phone number
@@ -28,8 +29,8 @@ export default function PhoneVerificationScreen() {
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <Text style={[styles.title, { color: theme.colors.text }]}>Verify Your Phone Number</Text>
       <TextInput
-        placeholder="Enter your phone number with country code (e.g., +2348012345678)"
-        placeholderTextColor={theme.colors.placeholder}  // Placeholder color based on theme
+        placeholder="Enter your number with country code (+44- number)"
+        placeholderTextColor={isDarkMode ? '#aaa' : '#888'}  // Custom placeholder text color
         value={fullPhoneNumber}
         onChangeText={setFullPhoneNumber}
         style={[

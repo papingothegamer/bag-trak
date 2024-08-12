@@ -5,6 +5,7 @@ import { useTheme } from '../components/ThemeContext';
 export default function EmailVerificationScreen() {
   const [email, setEmail] = useState('');
   const { theme } = useTheme(); // Access theme
+  const isDarkMode = theme.dark; // Check if dark mode is enabled
 
   const handleVerifyEmail = () => {
     Alert.alert('Verification Email Sent', 'A verification email has been sent to ' + email);
@@ -15,16 +16,10 @@ export default function EmailVerificationScreen() {
       <Text style={[styles.title, { color: theme.colors.text }]}>Verify Your Email</Text>
       <TextInput
         placeholder="Enter your email"
-        placeholderTextColor={theme.colors.placeholder}  // Placeholder color based on theme
+        placeholderTextColor={isDarkMode ? '#aaa' : '#888'}  // Custom placeholder text color
         value={email}
         onChangeText={setEmail}
-        style={[
-          styles.input,
-          { 
-            borderColor: theme.colors.border,
-            color: theme.colors.text,  // Text color based on theme
-          }
-        ]}
+        style={[styles.input, { borderColor: theme.colors.border, color: theme.colors.text }]}
         keyboardType="email-address"
       />
       <Button title="Verify Email" onPress={handleVerifyEmail} color={theme.colors.primary} />
