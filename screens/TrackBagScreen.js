@@ -41,16 +41,16 @@ export default function TrackBagScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <Text style={[styles.title, { color: theme.colors.text }]}>Track Your Bag</Text>
+      <Text style={[styles.title, { color: theme.colors.text }]}>track your bag</Text>
       <TextInput
-        placeholder="Tracking Number"
+        placeholder="tracking number"
         value={trackingNumber}
         onChangeText={setTrackingNumber}
         style={[styles.input, { borderColor: isDarkMode ? '#333' : '#ccc', color: isDarkMode ? '#fff' : '#000' }]}
         placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
       />
-      <Button title="Scan Bag Tag Barcode" onPress={() => setShowScanner(true)} color={theme.colors.primary} />
-      <Button title="Track Bag" onPress={handleTrackBag} color={theme.colors.primary} />
+      <Button title="scan tag barcode" onPress={() => setShowScanner(true)} color={theme.colors.primary} />
+      <Button title="track bag" onPress={handleTrackBag} color={theme.colors.primary} />
       
       {showScanner && (
         <View style={styles.scannerContainer}>
@@ -67,7 +67,7 @@ export default function TrackBagScreen() {
             </View>
             <View style={styles.bottomOverlay} />
           </View>
-          {scanned && <Button title="Tap to Scan Again" onPress={() => setScanned(false)} color={theme.colors.primary} />}
+          {scanned && <Button title="tap to scan again" onPress={() => setScanned(false)} color={theme.colors.primary} />}
         </View>
       )}
     </View>

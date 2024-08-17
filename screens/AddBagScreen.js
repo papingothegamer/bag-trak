@@ -66,32 +66,32 @@ export default function AddBagScreen({ navigation }) {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <Text style={[styles.title, { color: theme.colors.titleText }]}>Add a New Bag</Text>
+      <Text style={[styles.title, { color: theme.colors.titleText }]}>add a new bag</Text>
       <TextInput
-        placeholder="Location"
+        placeholder="location"
         value={location}
         onChangeText={setLocation}
         style={[styles.input, { borderColor: isDarkMode ? '#333' : '#ccc', color: isDarkMode ? '#fff' : '#000' }]}
         placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
       />
       <TextInput
-        placeholder="Flight"
+        placeholder="flight"
         value={flight}
         onChangeText={setFlight}
         style={[styles.input, { borderColor: isDarkMode ? '#333' : '#ccc', color: isDarkMode ? '#fff' : '#000' }]}
         placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
       />
       <TextInput
-        placeholder="Airport Code (e.g., ATL)"
+        placeholder="airport code (e.g., ATL)"
         value={airportCode}
         onChangeText={setAirportCode}
         style={[styles.input, { borderColor: isDarkMode ? '#333' : '#ccc', color: isDarkMode ? '#fff' : '#000' }]}
         placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
       />
-      <Button title="Generate Tracking Code" onPress={handleGenerateTrackingCode} color={theme.colors.primary} />
+      <Button title="generate tracking code" onPress={handleGenerateTrackingCode} color={theme.colors.primary} />
       {generatedTrackingCode ? (
         <TextInput
-          placeholder="Tracking Number"
+          placeholder="tracking Number"
           value={generatedTrackingCode}
           style={[styles.input, { borderColor: isDarkMode ? '#333' : '#ccc', color: isDarkMode ? '#fff' : '#000' }]}
           editable={false}
@@ -99,9 +99,9 @@ export default function AddBagScreen({ navigation }) {
         />
       ) : null}
       {!showScanner && (
-        <Button title="Add Bag" onPress={handleAddBag} color={theme.colors.primary} />
+        <Button title="add bag" onPress={handleAddBag} color={theme.colors.primary} />
       )}
-      <Button title="Scan Bag Tag Barcode" onPress={() => setShowScanner(true)} color={theme.colors.primary} />
+      <Button title="scan tag barcode" onPress={() => setShowScanner(true)} color={theme.colors.primary} />
       
       {showScanner && (
         <View style={styles.scannerContainer}>
@@ -118,7 +118,7 @@ export default function AddBagScreen({ navigation }) {
             </View>
             <View style={styles.bottomOverlay} />
           </View>
-          {scanned && <Button title="Tap to Scan Again" onPress={() => setScanned(false)} color={theme.colors.primary} />}
+          {scanned && <Button title="tap to scan again" onPress={() => setScanned(false)} color={theme.colors.primary} />}
         </View>
       )}
     </View>
