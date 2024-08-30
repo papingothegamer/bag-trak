@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, Dimensions } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { useTheme } from '../components/ThemeContext'; // Import useTheme
+import { useTheme } from '../components/ThemeContext'; 
 
 const generateTrackingCode = (airportCode) => {
   const randomNumber = Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit number
