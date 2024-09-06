@@ -56,22 +56,27 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    marginBottom: 16,
+    marginBottom: 2, // Reduced marginBottom to decrease space
     textAlign: 'center',
   },
   picker: {
     height: 150,
     width: '100%',
-    marginBottom: 20,
+    marginBottom: 16, // Adjusted marginBottom to reduce space
   },
   button: {
     padding: 10,
     alignItems: 'center',
     borderRadius: 5,
+    marginBottom: 50, // Added margin bottom to create space
   },
   buttonText: {
     fontSize: 16,
   },
+  bottomSpacing: {
+    height: 50, // Adjust height as needed to create space
+  },
 });
+
 
 export default AppLanguageSelectionScreen;

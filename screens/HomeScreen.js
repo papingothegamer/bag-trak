@@ -1,55 +1,54 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TextInput, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import LiveBagScreen from './LiveBagScreen';
+import RecentBags from './RecentBags'; // Ensure the import is correct
 import { useTheme } from '../components/ThemeContext'; // Import useTheme
-import LiveBagScreen from './LiveBagScreen'; // Import LiveBagScreen
-import { Ionicons } from '@expo/vector-icons'; // Importing Ionicons for the plus sign
 
 const HomeScreen = ({ navigation }) => {
   const { theme } = useTheme(); // Access theme
   const isDarkMode = theme.dark;
-  const [bags, setBags] = useState([
-    {
-      id: 'BTRK-2447AK',
-      weight: '20KG',
-      airline: 'QATAR',
-      from: 'LOS',
-      to: 'DOH',
-      flightTime: '3h05min',
-    },
-    // Add more initial bag objects if needed or start with an empty array.
-  ]);
+  const [bags, setBags] = useState([]);
+  const [recentBags, setRecentBags] = useState([]);
 
-  const stopTracking = (id) => {
-    const updatedBags = bags.filter(bag => bag.id !== id);
-    setBags(updatedBags);
+  const handleStopTracking = (bagId) => {
+    const bagToRemove = bags.find(bag => bag.id === bagId);
+    if (bagToRemove) {
+      setBags(bags.filter(bag => bag.id !== bagId));
+      const bagWithTimestamp = { ...bagToRemove, stoppedAt: new Date().toLocaleString() };
+      setRecentBags(prevBags => [bagWithTimestamp, ...prevBags]);
+    }
   };
 
-  const deleteBag = (id) => {
-    const updatedBags = bags.filter(bag => bag.id !== id);
-    setBags(updatedBags);
+  const handleDeleteBag = (bagId) => {
+    setRecentBags(prevBags => prevBags.filter(bag => bag.id !== bagId));
   };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <Ionicons name="settings-outline" size={20} color={theme.colors.primary} />
+        </TouchableOpacity>
         <TextInput 
           placeholder="Search bags..."
+          placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
           style={[
             styles.input,
             { borderColor: isDarkMode ? '#333' : '#ccc', color: isDarkMode ? '#fff' : '#000' },
           ]}
         />
-        <TouchableOpacity onPress={() => navigation.navigate('AddBag')}>
-          <Ionicons name="add-circle-outline" size={24} color={theme.colors.primary} />
+        <TouchableOpacity onPress={() => navigation.navigate('AddBag', { setBags })}>
+          <Ionicons name="add-circle-outline" size={20} color={theme.colors.primary} />
         </TouchableOpacity>
       </View>
 
-      {bags.length > 0 && (
-        <LiveBagScreen
-          bags={bags}
-          onStopTracking={stopTracking}
-          onDeleteBag={deleteBag}
-        />
+      <LiveBagScreen bags={bags} onStopTracking={handleStopTracking} />
+
+      {recentBags.length > 0 && (
+        <View style={styles.recentBagsContainer}>
+          <RecentBags removedBags={recentBags} onDeleteBag={handleDeleteBag} />
+        </View>
       )}
     </View>
   );
@@ -62,7 +61,6 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
   },
@@ -72,6 +70,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 10,
     borderRadius: 8,
+    marginHorizontal: 10, // Add space between the search bar and icons
+  },
+  recentBagsContainer: {
+    marginTop: 20,
+    marginBottom: 50, // Adjust as needed
   },
 });
 

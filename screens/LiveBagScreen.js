@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, Alert, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useTheme } from '../components/ThemeContext'; // Import useTheme
 
-const LiveBagScreen = ({ bags, onStopTracking, onDeleteBag }) => {
+const LiveBagScreen = ({ bags, onStopTracking }) => {
+  const { theme } = useTheme(); // Access theme
   const [expandedBagId, setExpandedBagId] = useState(null);
 
   const toggleExpand = (id) => {
@@ -10,58 +12,44 @@ const LiveBagScreen = ({ bags, onStopTracking, onDeleteBag }) => {
 
   return (
     <View style={styles.container}>
-      {bags.map(bag => (
-        <TouchableOpacity key={bag.id} onPress={() => toggleExpand(bag.id)} style={styles.bagCard}>
-          <Text style={styles.bagId}>{bag.id}</Text>
-          <Text style={styles.bagDetails}>Weight: {bag.weight} | Airline: {bag.airline}</Text>
-          <Text style={styles.bagDetails}>From: {bag.from} - To: {bag.to}</Text>
+      <Text style={[styles.headerText, { color: theme.colors.titleText }]}>Live Bags</Text>
+      {bags.length > 0 ? (
+        bags.map(bag => (
+          <TouchableOpacity key={bag.id} onPress={() => toggleExpand(bag.id)} style={styles.bagCard}>
+            <Text style={styles.bagId}>Bag ID: {bag.id}</Text>
+            <Text style={styles.bagDetails}>Weight: {bag.weight} | Airline: {bag.airline}</Text>
+            <Text style={styles.bagDetails}>From: {bag.from} - To: {bag.to}</Text>
 
-          {expandedBagId === bag.id && (
-            <View style={styles.expandedDetails}>
-              <Text>Flight Time: {bag.flightTime}</Text>
-              <TouchableOpacity onPress={() => onStopTracking(bag.id)}>
-                <Text style={styles.stopTrackingText}>Stop Tracking</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </TouchableOpacity>
-      ))}
-
-      {bags.length > 1 && (
-        <View style={styles.recentBagsSection}>
-          <Text style={styles.sectionTitle}>Recent Bags</Text>
-          <FlatList
-            data={bags.slice(1)}
-            renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => toggleExpand(item.id)} style={styles.bagCard}>
-                <Text style={styles.bagId}>{item.id}</Text>
-                <Text style={styles.bagDetails}>Weight: {item.weight} | Airline: {item.airline}</Text>
-                <Text style={styles.bagDetails}>From: {item.from} - To: {item.to}</Text>
-
-                {expandedBagId === item.id && (
-                  <View style={styles.expandedDetails}>
-                    <TouchableOpacity onPress={() => onDeleteBag(item.id)}>
-                      <Text style={styles.deleteText}>Delete</Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
-              </TouchableOpacity>
+            {expandedBagId === bag.id && (
+              <View style={styles.expandedDetails}>
+                <Text>Flight Time: {bag.flightTime}</Text>
+                <TouchableOpacity onPress={() => onStopTracking(bag.id)}>
+                  <Text style={styles.stopTrackingText}>Stop Tracking</Text>
+                </TouchableOpacity>
+              </View>
             )}
-            keyExtractor={item => item.id}
-          />
-        </View>
+          </TouchableOpacity>
+        ))
+      ) : (
+        <Text style={styles.noBagsText}>No bags are currently being tracked.</Text>
       )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, padding: 20 },
+  headerText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
   bagCard: {
     padding: 20,
     borderRadius: 10,
     backgroundColor: 'blue',
     marginBottom: 15,
+    width: '100%',
   },
   bagId: {
     fontSize: 18,
@@ -80,9 +68,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: 'red',
   },
-  recentBagsSection: { marginTop: 20 },
-  sectionTitle: { fontSize: 20, marginBottom: 10, fontWeight: 'bold' },
-  deleteText: { color: 'red', marginTop: 10 },
+  noBagsText: { fontSize: 18, color: 'grey', marginTop: 20 },
 });
 
 export default LiveBagScreen;

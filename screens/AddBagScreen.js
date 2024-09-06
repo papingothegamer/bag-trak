@@ -8,7 +8,7 @@ const generateTrackingCode = (airportCode) => {
   return `BTRK-${randomNumber}-${airportCode}`;
 };
 
-export default function AddBagScreen({ navigation }) {
+export default function AddBagScreen({ navigation, route }) {
   const { isDarkMode, theme } = useTheme(); // Access theme
   const [trackingNumber, setTrackingNumber] = useState('');
   const [location, setLocation] = useState('');
@@ -18,6 +18,8 @@ export default function AddBagScreen({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
+
+  const { setBags } = route.params; // Get the setBags function from route params
 
   useEffect(() => {
     (async () => {
@@ -49,9 +51,21 @@ export default function AddBagScreen({ navigation }) {
 
   const handleAddBag = () => {
     if (trackingNumber && location && flight) {
-      // Replace with real logic to add the bag
+      const newBag = {
+        id: trackingNumber,
+        location,
+        flight,
+        weight: 'Unknown', // You can add a weight input if necessary
+        airline: 'Unknown', // Add logic to include airline if needed
+        from: airportCode,
+        to: 'Unknown', // Add logic for destination airport if needed
+        flightTime: 'N/A', // This could be derived or input by the user
+      };
+
+      setBags(prevBags => [...prevBags, newBag]); // Update bag list in HomeScreen
+
       Alert.alert('Bag Added', `Tracking Number: ${trackingNumber}\nLocation: ${location}\nFlight: ${flight}`);
-      navigation.navigate('Home');
+      navigation.navigate('Home'); // Navigate back to HomeScreen
     } else {
       Alert.alert('Error', 'Please fill in all fields');
     }
@@ -95,92 +109,36 @@ export default function AddBagScreen({ navigation }) {
           value={generatedTrackingCode}
           style={[styles.input, { borderColor: isDarkMode ? '#333' : '#ccc', color: isDarkMode ? '#fff' : '#000' }]}
           editable={false}
-          placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
         />
       ) : null}
-      {!showScanner && (
-        <Button title="add bag" onPress={handleAddBag} color={theme.colors.primary} />
-      )}
-      <Button title="scan tag barcode" onPress={() => setShowScanner(true)} color={theme.colors.primary} />
-      
+      <Button title="scan barcode" onPress={() => setShowScanner(true)} color={theme.colors.primary} />
+      <Button title="add bag" onPress={handleAddBag} color={theme.colors.primary} />
       {showScanner && (
-        <View style={styles.scannerContainer}>
-          <BarCodeScanner
-            onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-            style={StyleSheet.absoluteFillObject}
-          />
-          <View style={styles.overlay}>
-            <View style={styles.topOverlay} />
-            <View style={styles.middleContainer}>
-              <View style={styles.leftOverlay} />
-              <View style={styles.viewfinder} />
-              <View style={styles.rightOverlay} />
-            </View>
-            <View style={styles.bottomOverlay} />
-          </View>
-          {scanned && <Button title="tap to scan again" onPress={() => setScanned(false)} color={theme.colors.primary} />}
-        </View>
+        <BarCodeScanner
+          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+          style={StyleSheet.absoluteFillObject}
+        />
       )}
     </View>
   );
 }
 
-const { width } = Dimensions.get('window');
-const qrSize = width * 0.7;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     padding: 20,
+    justifyContent: 'center',
   },
   title: {
     fontSize: 24,
+    fontWeight: 'bold',
     marginBottom: 20,
-    textAlign: 'center',
   },
   input: {
     height: 40,
     borderWidth: 1,
-    borderRadius: 5, // Rounded edges
-    marginBottom: 12,
-    paddingHorizontal: 8,
-  },
-  scannerContainer: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  topOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-  },
-  middleContainer: {
-    flexDirection: 'row',
-  },
-  leftOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-  },
-  viewfinder: {
-    width: qrSize,
-    height: qrSize,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#fff',
-    backgroundColor: 'transparent',
-  },
-  rightOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-  },
-  bottomOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    marginBottom: 20,
   },
 });
