@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../components/ThemeContext';
 import { CommonActions } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ProfileScreen = ({ navigation }) => {
   const { logout, deleteUser } = useAuth();
@@ -54,45 +55,50 @@ const ProfileScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <Text style={[styles.title, { color: theme.colors.text }]}>Profile Settings</Text>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <View style={styles.content}>
+        <Text style={[styles.title, { color: theme.colors.text }]}>Profile Settings</Text>
 
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: theme.colors.primary }]}
-        onPress={() => navigation.navigate('AccountSettings')}
-      >
-        <Text style={[styles.buttonText, { color: theme.colors.buttonText }]}>Account Settings</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: theme.colors.primary }]}
-        onPress={() => navigation.navigate('UserSettings')}
-      >
-        <Text style={[styles.buttonText, { color: theme.colors.buttonText }]}>User Settings</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: theme.colors.primary }]}
-        onPress={() => navigation.navigate('NotificationSettings')}
-      >
-        <Text style={[styles.buttonText, { color: theme.colors.buttonText }]}>Notification Settings</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: theme.colors.danger }]}
-        onPress={handleLogout}
-      >
-        <Text style={[styles.buttonText, { color: isDarkMode ? 'white' : 'black' }]}>Logout</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: theme.colors.danger }]}
-        onPress={handleDeleteAccount}
-      >
-        <Text style={[styles.buttonText, { color: 'red' }]}>Delete Account</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: theme.colors.primary }]}
+          onPress={() => navigation.navigate('AccountSettings')}
+        >
+          <Text style={[styles.buttonText, { color: theme.colors.buttonText }]}>Account Settings</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: theme.colors.primary }]}
+          onPress={() => navigation.navigate('UserSettings')}
+        >
+          <Text style={[styles.buttonText, { color: theme.colors.buttonText }]}>User Settings</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: theme.colors.primary }]}
+          onPress={() => navigation.navigate('NotificationSettings')}
+        >
+          <Text style={[styles.buttonText, { color: theme.colors.buttonText }]}>Notification Settings</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: theme.colors.danger }]}
+          onPress={handleLogout}
+        >
+          <Text style={[styles.buttonText, { color: isDarkMode ? 'white' : 'black' }]}>Logout</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: theme.colors.danger }]}
+          onPress={handleDeleteAccount}
+        >
+          <Text style={[styles.buttonText, { color: 'red' }]}>Delete Account</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  content: {
     flex: 1,
     padding: 16,
   },
