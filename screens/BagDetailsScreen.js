@@ -1,38 +1,64 @@
-import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import { useTheme } from '../components/ThemeContext'; // Import useTheme
+import React, { useState, useEffect } from 'react';
+import { View, ActivityIndicator, Alert } from 'react-native';
+import { api } from '../config/api';
 
-export default function BagDetailsScreen({ route, navigation }) {
+const BagDetailsScreen = ({ route, navigation }) => {
   const { bagId } = route.params;
+  const [bagDetails, setBagDetails] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
-  // Replace with real data fetching logic
-  const bag = { id: bagId, name: `Bag ${bagId}`, status: 'Checked In', lastLocation: 'JFK Airport' };
+  useEffect(() => {
+    loadBagDetails();
+  }, [bagId]);
 
-  const { theme } = useTheme(); // Access theme
+  const loadBagDetails = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const details = await api.getBagDetails(bagId);
+      setBagDetails(details);
+    } catch (error) {
+      setError('Failed to load bag details');
+      Alert.alert('Error', 'Could not load bag details');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <Text style={[styles.title, { color: theme.colors.text }]}>{bag.name}</Text>
-      <Text style={[styles.detail, { color: theme.colors.text }]}>Status: {bag.status}</Text>
-      <Text style={[styles.detail, { color: theme.colors.text }]}>Last Location: {bag.lastLocation}</Text>
-      <Button title="Back to Home" onPress={() => navigation.navigate('Home')} color={theme.colors.primary} />
-    </View>
-  );
-}
+  const handleStatusUpdate = async (newStatus, location) => {
+    try {
+      setIsUpdating(true);
+      await api.updateBagStatus(bagId, newStatus, location);
+      // Reload details after update
+      await loadBagDetails();
+      Alert.alert('Success', 'Bag status updated');
+    } catch (error) {
+      Alert.alert('Error', 'Could not update bag status');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-  detail: {
-    fontSize: 18,
-    marginBottom: 10,
-  },
-});
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Something went wrong</Text>
+        <Button title="Try Again" onPress={loadBagDetails} />
+      </View>
+    );
+  }
+
+  // ... rest of your render code ...
+};
+
+export default BagDetailsScreen;

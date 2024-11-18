@@ -1,23 +1,49 @@
 import React, { useState, useCallback } from 'react';
-import { View, TextInput, StyleSheet, Text, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import LiveBagScreen from './LiveBagScreen';
+import BagCard from '../components/ui/BagCard';
 import RecentBags from './RecentBags';
 import FloatingActionButton from '../components/ui/FloatingActionButton';
 import { useTheme } from '../components/ThemeContext';
+import ScreenLayout from '../components/layout/ScreenLayout';
+import { Swipeable } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const EmptyState = () => {
+  const { theme } = useTheme();
+  return (
+    <ScreenLayout title="My Bags">
+      <View style={styles.emptyStateContainer}>
+        <MaterialIcons name="luggage" size={64} color={theme.colors.primary} />
+      <Text style={[styles.emptyStateText, { color: theme.colors.text }]}>
+        No bags being tracked
+      </Text>
+      <Text style={[styles.emptyStateSubtext, { color: theme.colors.text + '80' }]}>
+        Tap the + button to start tracking a bag
+      </Text>
+    </View>
+    </ScreenLayout>
+  );
+};
 
 const HomeScreen = ({ navigation }) => {
   const { theme } = useTheme();
   const [bags, setBags] = useState([]);
   const [recentBags, setRecentBags] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [expandedBagId, setExpandedBagId] = useState(null);
 
-  const handleStopTracking = (bagId) => {
+  const handleStopTracking = async (bagId) => {
     const bagToRemove = bags.find(bag => bag.id === bagId);
     if (bagToRemove) {
       setBags(bags.filter(bag => bag.id !== bagId));
       const bagWithTimestamp = { ...bagToRemove, stoppedAt: new Date().toLocaleString() };
       setRecentBags(prevBags => [bagWithTimestamp, ...prevBags]);
+
+      // Store the logged bag in AsyncStorage
+      const existingBags = await AsyncStorage.getItem('loggedBags');
+      const loggedBags = existingBags ? JSON.parse(existingBags) : [];
+      loggedBags.push(bagWithTimestamp);
+      await AsyncStorage.setItem('loggedBags', JSON.stringify(loggedBags));
     }
   };
 
@@ -29,17 +55,20 @@ const HomeScreen = ({ navigation }) => {
     setBags(prevBags => [newBag, ...prevBags]);
   }, []);
 
-  const EmptyState = () => (
-    <View style={styles.emptyStateContainer}>
-      <MaterialIcons name="luggage" size={64} color={theme.colors.primary} />
-      <Text style={[styles.emptyStateText, { color: theme.colors.text }]}>
-        No bags added yet
-      </Text>
-      <Text style={[styles.emptyStateSubtext, { color: theme.colors.text + '80' }]}>
-        Tap the + button to add your first bag
-      </Text>
-    </View>
-  );
+  const handleBagPress = (bagId) => {
+    setExpandedBagId(currentId => currentId === bagId ? null : bagId);
+  };
+
+  const renderRightActions = (bagId) => {
+    return (
+      <TouchableOpacity
+        onPress={() => handleDeleteBag(bagId)}
+        style={styles.deleteButton}
+      >
+        <MaterialIcons name="delete" size={24} color="white" />
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -50,7 +79,6 @@ const HomeScreen = ({ navigation }) => {
         >
           <Ionicons name="person-circle-outline" size={28} color={theme.colors.primary} />
         </TouchableOpacity>
-        <Text style={[styles.title, { color: theme.colors.text }]}>My Bags</Text>
         <TouchableOpacity 
           onPress={() => navigation.navigate('UserSettings')}
           style={styles.iconButton}
@@ -59,29 +87,39 @@ const HomeScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.searchContainer}>
-        <Ionicons name="search" size={20} color={theme.colors.text} style={styles.searchIcon} />
-        <TextInput 
-          placeholder="Search bags..."
-          placeholderTextColor={theme.colors.text + '80'}
-          style={[styles.input, { color: theme.colors.text }]}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-      </View>
-
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {bags.length === 0 ? (
           <EmptyState />
         ) : (
           <>
-            <LiveBagScreen bags={bags} onStopTracking={handleStopTracking} />
-            {recentBags.length > 0 && (
-              <View style={styles.recentBagsContainer}>
-                <RecentBags removedBags={recentBags} onDeleteBag={handleDeleteBag} />
-              </View>
-            )}
+            {bags.map(bag => (
+              <BagCard
+                key={bag.id || bag._id}
+                bag={bag}
+                isLive={true}
+                progress={bag.progress || 0}
+                isExpanded={expandedBagId === (bag.id || bag._id)}
+                onPress={() => handleBagPress(bag.id || bag._id)}
+                onStopTracking={() => handleStopTracking(bag.id || bag._id)}
+              />
+            ))}
           </>
+        )}
+        
+        {recentBags.length > 0 && (
+          <View style={styles.recentBagsContainer}>
+            {recentBags.map(bag => (
+              <Swipeable
+                key={bag.id || bag._id}
+                renderRightActions={() => renderRightActions(bag.id || bag._id)}
+              >
+                <BagCard
+                  bag={bag}
+                  isLive={false}
+                />
+              </Swipeable>
+            ))}
+          </View>
         )}
       </ScrollView>
 
@@ -108,23 +146,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 16,
-    marginBottom: 16,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    backgroundColor: 'rgba(150, 150, 150, 0.1)',
-  },
-  searchIcon: {
-    marginRight: 8,
-  },
-  input: {
-    flex: 1,
-    height: 40,
-    fontSize: 16,
-  },
   content: {
     flex: 1,
     paddingHorizontal: 16,
@@ -150,6 +171,15 @@ const styles = StyleSheet.create({
   emptyStateSubtext: {
     fontSize: 16,
     marginTop: 8,
+    textAlign: 'center',
+    paddingHorizontal: 32,
+  },
+  deleteButton: {
+    backgroundColor: 'red',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 80,
+    height: '100%',
   },
 });
 

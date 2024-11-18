@@ -1,28 +1,52 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { CommonActions } from '@react-navigation/native'; // Import CommonActions
 import { useTheme } from '../components/ThemeContext'; // Import useTheme
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { initializeFirebase } from '../services/firebase';
+import { api, API_URL } from '../config/api';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { isDarkMode, theme } = useTheme(); // Access theme
 
-  const handleLogin = () => {
-    // Replace with actual login logic
-    if (email === 'test@example.com' && password === 'password') {
-      // Reset the navigation stack to Home screen upon successful login
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: 'Home' }],
-        })
-      );
-    } else {
-      // Handle invalid login
-      alert('Invalid email or password');
+  const handleLogin = async () => {
+    try {
+      const loginData = {
+        email: 'test@example.com',
+        password: 'password123'
+      };
+      
+      console.log('Sending login request to:', `${API_URL}/api/auth/login`);
+      console.log('With data:', loginData);
+      
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(loginData)
+      });
+
+      console.log('Response status:', response.status);
+      const data = await response.json();
+      console.log('Login response:', data);
+
+      if (data.token) {
+        await AsyncStorage.setItem('userToken', data.token);
+        console.log('Token stored in AsyncStorage');
+        navigation.replace('Home');
+      } else {
+        Alert.alert('Error', data.message || 'Login failed');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      Alert.alert('Error', `Login failed: ${error.message}`);
     }
   };
 

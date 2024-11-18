@@ -1,3 +1,4 @@
+// Create this new file from your component version
 import React, { useEffect, useRef } from 'react';
 import { View, Text, Animated, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -7,8 +8,9 @@ const PROGRESS_BAR_WIDTH = screenWidth - 72;
 const ICON_SIZE = 20;
 const PROGRESS_BAR_HEIGHT = 8;
 
-const LiveBagCard = ({ 
+const BagCard = ({ 
   bag, 
+  isLive = false,
   progress, 
   isExpanded, 
   onPress, 
@@ -18,26 +20,30 @@ const LiveBagCard = ({
   const expandAnimation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const validProgress = Number.isFinite(progress) ? progress : 0;
-    const maxTranslation = PROGRESS_BAR_WIDTH - ICON_SIZE - 32;
-    const toValue = validProgress * maxTranslation;
-    
-    if (Number.isFinite(toValue)) {
-      Animated.timing(bagPosition, {
-        toValue,
-        duration: 1000,
-        useNativeDriver: true,
-      }).start();
+    if (isLive) {
+      const validProgress = Number.isFinite(progress) ? progress : 0;
+      const maxTranslation = PROGRESS_BAR_WIDTH - ICON_SIZE - 32;
+      const toValue = validProgress * maxTranslation;
+      
+      if (Number.isFinite(toValue)) {
+        Animated.timing(bagPosition, {
+          toValue,
+          duration: 1000,
+          useNativeDriver: true,
+        }).start();
+      }
     }
-  }, [progress]);
+  }, [progress, isLive]);
 
   useEffect(() => {
-    Animated.timing(expandAnimation, {
-      toValue: isExpanded ? 1 : 0,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-  }, [isExpanded]);
+    if (isLive) {
+      Animated.timing(expandAnimation, {
+        toValue: isExpanded ? 1 : 0,
+        duration: 300,
+        useNativeDriver: false,
+      }).start();
+    }
+  }, [isExpanded, isLive]);
 
   const formatTime = (timestamp) => {
     if (!timestamp) return '--:--';
@@ -66,10 +72,7 @@ const LiveBagCard = ({
       const hours = Math.floor(durationMs / (1000 * 60 * 60));
       const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
       
-      if (hours > 0) {
-        return `${hours}h ${minutes}m`;
-      }
-      return `${minutes}m`;
+      return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
     } catch (error) {
       console.error('Error calculating duration:', error);
       return '--';
@@ -92,9 +95,24 @@ const LiveBagCard = ({
     </View>
   );
 
+  if (!isLive) {
+    // Stopped Bag Card
+    return (
+      <View style={[styles.bagCard, styles.stoppedBagCard]}>
+        <Text style={styles.bagId}>Bag ID: {bag.id}</Text>
+        <View style={styles.details}>
+          <Text style={styles.detailText}>Flight: {bag.flight}</Text>
+          <Text style={styles.detailText}>Route: {bag.from} - {bag.to}</Text>
+          <Text style={styles.detailText}>Status: Tracking Completed</Text>
+        </View>
+      </View>
+    );
+  }
+
+  // Live Bag Card
   const expandedHeight = expandAnimation.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, 150], // Adjust this value based on your expanded content height
+    outputRange: [0, 150],
   });
 
   const expandedOpacity = expandAnimation.interpolate({
@@ -105,7 +123,7 @@ const LiveBagCard = ({
   return (
     <TouchableOpacity 
       onPress={onPress}
-      style={styles.bagCard}
+      style={[styles.bagCard, styles.liveBagCard]}
     >
       <View style={styles.cardContent}>
         <Text style={styles.bagId}>Bag ID: {bag.id}</Text>
@@ -140,12 +158,17 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     marginBottom: 16,
-    backgroundColor: '#4A90E2',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+  liveBagCard: {
+    backgroundColor: '#4A90E2',
+  },
+  stoppedBagCard: {
+    backgroundColor: '#808080',
   },
   cardContent: {
     width: '100%',
@@ -224,6 +247,14 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: '600',
   },
+  details: {
+    marginTop: 8,
+  },
+  detailText: {
+    color: 'white',
+    marginBottom: 6,
+    fontSize: 14,
+  },
 });
 
-export default LiveBagCard;
+export default BagCard;

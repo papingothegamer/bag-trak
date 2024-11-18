@@ -11,6 +11,7 @@ import PhoneVerificationScreen from '../screens/PhoneVerificationScreen';
 import UserSettingsScreen from '../screens/UserSettingsScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
+import BagHistoryScreen from '../screens/BagHistoryScreen';
 
 const Stack = createStackNavigator();
 
@@ -81,6 +82,7 @@ export default function AppNavigator() {
         component={NotificationScreen}
         options={{ headerShown: false }}
       />
+      <Stack.Screen name="BagHistory" component={BagHistoryScreen} />
     </Stack.Navigator>
   );
 }
