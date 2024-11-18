@@ -1,21 +1,28 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
-import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../components/ThemeContext'; // Import useTheme
 
 export default function SignupScreen({ navigation }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { signup } = useAuth();
   const { theme, isDarkMode } = useTheme(); // Access theme and dark mode
 
   const handleSignup = () => {
-    if (signup(name, email, password)) {
-      navigation.navigate('Login');
-    } else {
-      alert('Signup failed');
+    // Temporary bypass for testing
+    const bypassSignup = true; // Set this to true to bypass signup
+
+    if (bypassSignup) {
+      navigation.navigate('Home'); // Directly navigate to Home
+      return;
     }
+
+    // Existing signup logic...
+    // if (signup(name, email, password)) {
+    //   navigation.navigate('Login');
+    // } else {
+    //   alert('Signup failed');
+    // }
   };
 
   return (
@@ -93,3 +100,4 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 });
+6

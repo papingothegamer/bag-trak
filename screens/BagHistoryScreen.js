@@ -4,6 +4,7 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useTheme } from '../components/ThemeContext';
 import ScreenLayout from '../components/layout/ScreenLayout';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import BagCard from '../components/ui/BagCard'; // Import the updated BagCard
 
 const BagHistoryScreen = () => {
   const { theme } = useTheme();
@@ -45,47 +46,11 @@ const BagHistoryScreen = () => {
   );
 
   const renderBagItem = ({ item }) => (
-    <View style={[styles.bagItem, { backgroundColor: theme.colors.card }]}>
-      <TouchableOpacity onPress={() => setExpandedBagId(expandedBagId === item.bagId ? null : item.bagId)}>
-        <View style={styles.bagHeader}>
-          <MaterialIcons name="luggage" size={24} color={theme.colors.primary} />
-          <Text style={[styles.bagId, { color: theme.colors.text }]}>
-            {item.bagId}
-          </Text>
-          <Text style={[styles.date, { color: theme.colors.text + '80' }]}>
-            {item.date}
-          </Text>
-        </View>
-        
-        <View style={styles.flightInfo}>
-          <View style={styles.routeContainer}>
-            <Text style={[styles.airport, { color: theme.colors.text }]}>{item.origin}</Text>
-            <Ionicons name="arrow-forward" size={20} color={theme.colors.text} style={styles.arrow} />
-            <Text style={[styles.airport, { color: theme.colors.text }]}>{item.destination}</Text>
-          </View>
-          <Text style={[styles.airline, { color: theme.colors.text + '80' }]}>
-            {item.airline} - {item.flightNumber}
-          </Text>
-        </View>
-
-        <View style={styles.statusContainer}>
-          <Text style={[styles.status, { color: theme.colors.primary }]}>
-            {item.status}
-          </Text>
-          <Text style={[styles.duration, { color: theme.colors.text + '80' }]}>
-            Duration: {item.duration}
-          </Text>
-        </View>
-      </TouchableOpacity>
-
-      {/* Dropdown for additional bag details */}
-      {expandedBagId === item.bagId && (
-        <View style={styles.detailsContainer}>
-          <Text style={[styles.detailText, { color: theme.colors.text }]}>Stopped At: {item.stoppedAt}</Text>
-          <Text style={[styles.detailText, { color: theme.colors.text }]}>Status: {item.status}</Text>
-        </View>
-      )}
-    </View>
+    <BagCard 
+      bag={item}
+      isHistory={true} // Use the history variant
+      onPress={() => setExpandedBagId(expandedBagId === item.bagId ? null : item.bagId)}
+    />
   );
 
   const EmptyState = () => (
@@ -144,69 +109,6 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     padding: 16,
-  },
-  bagItem: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  bagHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  bagId: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginLeft: 8,
-    flex: 1,
-  },
-  date: {
-    fontSize: 14,
-  },
-  flightInfo: {
-    marginBottom: 12,
-  },
-  routeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  airport: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  arrow: {
-    marginHorizontal: 8,
-  },
-  airline: {
-    fontSize: 14,
-  },
-  statusContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  status: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  duration: {
-    fontSize: 14,
-  },
-  detailsContainer: {
-    marginTop: 8,
-    padding: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 8,
-  },
-  detailText: {
-    fontSize: 14,
   },
   emptyStateContainer: {
     flex: 1,

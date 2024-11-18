@@ -13,7 +13,8 @@ const BagCard = ({
   progress = 0,
   isExpanded = false,
   onPress,
-  onStopTracking 
+  onStopTracking,
+  isHistory = false
 }) => {
   if (!bag) {
     return null;
@@ -98,8 +99,21 @@ const BagCard = ({
     </View>
   );
 
+  if (isHistory) {
+    return (
+      <View style={[styles.bagCard, styles.historyBagCard]}>
+        <Text style={[styles.bagId, styles.historyText]}>Bag ID: {bag.id}</Text>
+        <View style={styles.details}>
+          <Text style={[styles.detailText, styles.historyText]}>Flight: {bag.flight}</Text>
+          <Text style={[styles.detailText, styles.historyText]}>Route: {bag.from} - {bag.to}</Text>
+          <Text style={[styles.detailText, styles.historyText]}>Stopped At: {bag.stoppedAt}</Text>
+          <Text style={[styles.detailText, styles.historyText]}>Status: {bag.status}</Text>
+        </View>
+      </View>
+    );
+  }
+
   if (!isLive) {
-    // Stopped Bag Card
     return (
       <View style={[styles.bagCard, styles.stoppedBagCard]}>
         <Text style={styles.bagId}>Bag ID: {bag.id}</Text>
@@ -112,7 +126,6 @@ const BagCard = ({
     );
   }
 
-  // Live Bag Card
   const expandedHeight = expandAnimation.interpolate({
     inputRange: [0, 1],
     outputRange: [0, 150],
@@ -172,6 +185,11 @@ const styles = StyleSheet.create({
   },
   stoppedBagCard: {
     backgroundColor: '#808080',
+  },
+  historyBagCard: {
+    backgroundColor: '#f0f0f0',
+    borderColor: '#ccc',
+    borderWidth: 1,
   },
   cardContent: {
     width: '100%',
@@ -257,6 +275,9 @@ const styles = StyleSheet.create({
     color: 'white',
     marginBottom: 6,
     fontSize: 14,
+  },
+  historyText: {
+    color: '#333',
   },
 });
 

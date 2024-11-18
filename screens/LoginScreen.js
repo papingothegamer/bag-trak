@@ -1,20 +1,25 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { CommonActions } from '@react-navigation/native'; // Import CommonActions
 import { useTheme } from '../components/ThemeContext'; // Import useTheme
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { initializeFirebase } from '../services/firebase';
-import { api, API_URL } from '../config/api';
+import { API_URL } from '../config/api';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
   const { isDarkMode, theme } = useTheme(); // Access theme
 
   const handleLogin = async () => {
+    // Temporary bypass for testing
+    const bypassLogin = true; // Set this to true to bypass login
+
+    if (bypassLogin) {
+      navigation.replace('Home'); // Directly navigate to Home
+      return;
+    }
+
+    // Existing login logic...
     try {
       const loginData = {
         email: 'test@example.com',
@@ -34,6 +39,13 @@ const LoginScreen = ({ navigation }) => {
       });
 
       console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Login error response:', errorData);
+        throw new Error(errorData.message || 'Login failed');
+      }
+
       const data = await response.json();
       console.log('Login response:', data);
 

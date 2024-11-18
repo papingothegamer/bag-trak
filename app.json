@@ -14,7 +14,10 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "This app needs access to camera to scan barcodes."
+        "NSCameraUsageDescription": "This app needs access to camera to scan barcodes.",
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
       },
       "bundleIdentifier": "com.anonymous.bagtrak"
     },
@@ -25,7 +28,8 @@
       },
       "permissions": [
         "CAMERA",
-        "android.permission.CAMERA"
+        "android.permission.CAMERA",
+        "INTERNET"
       ],
       "package": "com.anonymous.bagtrak"
     },
@@ -44,6 +48,9 @@
     "newArchEnabled": true,
     "developmentClient": {
       "silentLaunch": true
+    },
+    "packagerOpts": {
+      "sourceExts": ["js", "jsx", "ts", "tsx", "json", "cjs", "mjs"]
     }
   }
 }

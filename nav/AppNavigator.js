@@ -18,12 +18,17 @@ const Stack = createStackNavigator();
 export default function AppNavigator() {
   return (
     <Stack.Navigator
-      initialRouteName="Login"
+      initialRouteName="Home"
       screenOptions={{
         headerShown: true,
         gestureEnabled: true,
       }}
     >
+      <Stack.Screen 
+        name="Home" 
+        component={HomeScreen}
+        options={{ headerLeft: null }}
+      />
       <Stack.Screen 
         name="Login" 
         component={LoginScreen}
@@ -38,11 +43,6 @@ export default function AppNavigator() {
         name="ForgotPassword" 
         component={ForgotPasswordScreen}
         options={{ headerShown: false }}
-      />
-      <Stack.Screen 
-        name="Home" 
-        component={HomeScreen}
-        options={{ headerLeft: null }}
       />
       <Stack.Screen 
         name="Profile" 

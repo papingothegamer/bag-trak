@@ -13,7 +13,9 @@ const bagRoutes = require('./routes/bagRoutes');
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: '*', // Allow all origins (for testing purposes)
+}));
 app.use(express.json());
 
 // Routes
