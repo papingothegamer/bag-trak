@@ -106,19 +106,33 @@ Navigate to the Project Directory
 - Conducted testing to confirm that all navigation routes are functioning as expected.
 - Reviewed and adjusted the responsive design of the app to ensure a consistent user experience across different devices.
 
+# Today's Progress (19 November 2024)
+
+### Work Done Today
+- Fixed the text color issue in the `HomeScreen` to ensure it changes correctly based on the theme (black in light mode and white in dark mode).
+- Verified that the `ScreenLayout` title is displayed correctly without duplicates.
+- Ensured that the `BagHistoryScreen` correctly implements unique keys for list items to resolve the warning.
+- Conducted testing to confirm that all navigation routes are functioning as expected.
+- Reviewed and adjusted the responsive design of the app to ensure a consistent user experience across different devices.
+- Adjusted the header text in the `UserSettingsScreen` to match the positioning and size of the "My Bags" text in the `HomeScreen`, improving the overall UI.
+- Updated the `UserSettingsScreen` to ensure the header text is centered and positioned appropriately, moving it lower for better visibility.
+- Added state variables for the Profile Settings component so that the app can display prompts to log in or sign up to the app when the app is in guest mode.
+- Improved the UI for the AddBagScreen.
+
 
 ## Technologies Used
 - **React Native**: Framework for building native mobile applications
 - **Expo**: Toolchain for React Native development
 - **React Navigation**: Routing and navigation for React Native
 - **React Native Picker**: Component for selecting from options (used for settings)
+- **v0, Cursor, Postman, ChatGPT and the power of imagination**: My everyday development kit.
 
 ## Current Problems
 ### Frontend Issues
 - [x] Text Color in Dark Mode: Fixed body text color to change based on theme.
-- [ ] Unique Key Prop Warning: Resolve the warning regarding unique keys for list items.
-- [ ] Navigation Issues: Ensure all navigation routes are functioning.
-- [ ] Responsive Design: Check UI responsiveness.
+- [X] Unique Key Prop Warning: Resolve the warning regarding unique keys for list items.
+- [X] Navigation Issues: Ensure all navigation routes are functioning.
+- [X] Responsive Design: Check UI responsiveness.
 - [ ] Error Handling: Implement error handling for user actions.
 
 ### Backend Issues
