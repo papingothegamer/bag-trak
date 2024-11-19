@@ -4,10 +4,10 @@ import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../components/ThemeContext';
 import { CommonActions } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 const ProfileScreen = ({ navigation }) => {
-  const { logout, deleteUser } = useAuth();
+  const { user, logout, deleteUser } = useAuth();
   const { isDarkMode, theme } = useTheme();
 
   const handleLogout = async () => {
@@ -71,39 +71,70 @@ const ProfileScreen = ({ navigation }) => {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Ionicons name="person-circle" size={80} color={theme.colors.primary} />
-          <Text style={[styles.title, { color: theme.colors.text }]}>John Doe</Text>
-          <Text style={[styles.subtitle, { color: theme.colors.text }]}>john.doe@example.com</Text>
+          {user ? (
+            <>
+              <Text style={[styles.title, { color: theme.colors.text }]}>{user.name}</Text>
+              <Text style={[styles.subtitle, { color: theme.colors.text }]}>{user.email}</Text>
+            </>
+          ) : (
+            <>
+              <Text style={[styles.title, { color: theme.colors.text }]}>Guest User</Text>
+              <Text style={[styles.subtitle, { color: theme.colors.text }]}>Not logged in</Text>
+            </>
+          )}
         </View>
 
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Settings</Text>
-          {renderSettingsButton("person-outline", "Account Settings", () => navigation.navigate('AccountSettings'))}
-          {renderSettingsButton("settings-outline", "User Settings", () => navigation.navigate('UserSettings'))}
-          {renderSettingsButton("notifications-outline", "Notification Settings", () => navigation.navigate('NotificationSettings'))}
-        </View>
+        {user ? (
+          <>
+            <View style={styles.section}>
+              <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Settings</Text>
+              {renderSettingsButton("person-outline", "Account Settings", () => navigation.navigate('AccountSettings'))}
+              {renderSettingsButton("settings-outline", "User Settings", () => navigation.navigate('UserSettings'))}
+              {renderSettingsButton("notifications-outline", "Notification Settings", () => navigation.navigate('NotificationSettings'))}
+            </View>
 
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Tracking History</Text>
-          {renderSettingsButton("time-outline", "Bag History", () => navigation.navigate('BagHistory'))}
-        </View>
+            <View style={styles.section}>
+              <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Tracking History</Text>
+              {renderSettingsButton("time-outline", "Bag History", () => navigation.navigate('BagHistory'))}
+            </View>
 
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Account Actions</Text>
-          <TouchableOpacity
-            style={[styles.button, styles.logoutButton, { backgroundColor: theme.colors.card }]}
-            onPress={handleLogout}
-          >
-            <Ionicons name="log-out-outline" size={24} color={theme.colors.danger} style={styles.buttonIcon} />
-            <Text style={[styles.buttonText, { color: theme.colors.danger }]}>Logout</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.button, styles.deleteButton, { backgroundColor: theme.colors.card }]}
-            onPress={handleDeleteAccount}
-          >
-            <Ionicons name="trash-outline" size={24} color={theme.colors.danger} style={styles.buttonIcon} />
-            <Text style={[styles.buttonText, { color: theme.colors.danger }]}>Delete Account</Text>
-          </TouchableOpacity>
-        </View>
+            <View style={styles.section}>
+              <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Account Actions</Text>
+              <TouchableOpacity
+                style={[styles.button, styles.logoutButton, { backgroundColor: theme.colors.card }]}
+                onPress={handleLogout}
+              >
+                <Ionicons name="log-out-outline" size={24} color={theme.colors.danger} style={styles.buttonIcon} />
+                <Text style={[styles.buttonText, { color: theme.colors.danger }]}>Logout</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, styles.deleteButton, { backgroundColor: theme.colors.card }]}
+                onPress={handleDeleteAccount}
+              >
+                <Ionicons name="trash-outline" size={24} color={theme.colors.danger} style={styles.buttonIcon} />
+                <Text style={[styles.buttonText, { color: theme.colors.danger }]}>Delete Account</Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        ) : (
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Guest Actions</Text>
+            <TouchableOpacity
+              style={[styles.button, { backgroundColor: theme.colors.card }]}
+              onPress={() => navigation.navigate('Login')}
+            >
+              <Ionicons name="log-in-outline" size={24} color={theme.colors.primary} style={styles.buttonIcon} />
+              <Text style={[styles.buttonText, { color: theme.colors.text }]}>Log In</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, { backgroundColor: theme.colors.card }]}
+              onPress={() => navigation.navigate('Signup')}
+            >
+              <Ionicons name="person-add-outline" size={24} color={theme.colors.primary} style={styles.buttonIcon} />
+              <Text style={[styles.buttonText, { color: theme.colors.text }]}>Sign Up</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

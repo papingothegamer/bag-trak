@@ -48,74 +48,87 @@ const UserSettingsScreen = () => {
   };
 
   const renderSettingItem = (icon, title, rightComponent) => (
-    <View style={[styles.settingItem, { borderBottomColor: theme.colors.border }]}>
+    <TouchableOpacity style={styles.settingItem}>
       <View style={styles.settingItemLeft}>
-        <Ionicons name={icon} size={24} color={theme.colors.primary} style={styles.settingIcon} />
+        <View style={[styles.iconContainer, { backgroundColor: theme.colors.primary + '20' }]}>
+          <Ionicons name={icon} size={20} color={theme.colors.primary} />
+        </View>
         <Text style={[styles.settingText, { color: theme.colors.text }]}>{title}</Text>
       </View>
       {rightComponent}
-    </View>
+    </TouchableOpacity>
   );
 
   return (
-    <ScreenLayout title="User Settings">
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Display Settings</Text>
-          {renderSettingItem(
-            'moon-outline',
-            'Dark Mode',
-            <Switch
-              value={isDarkMode}
-              onValueChange={toggleTheme}
-              trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
-              thumbColor={isDarkMode ? theme.colors.background : '#f4f3f4'}
-            />
-          )}
-        </View>
+    <ScreenLayout>
+      <View style={styles.container}>
+        <Text style={[styles.headerTitle, { color: theme.colors.text }]}>User Settings</Text>
+        <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Display Settings</Text>
+            {renderSettingItem(
+              'moon-outline',
+              'Dark Mode',
+              <Switch
+                value={isDarkMode}
+                onValueChange={toggleTheme}
+                trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
+                thumbColor={isDarkMode ? theme.colors.background : '#f4f3f4'}
+                ios_backgroundColor={theme.colors.border}
+              />
+            )}
+          </View>
 
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>App Settings</Text>
-          {renderSettingItem(
-            'language-outline',
-            'App Language',
-            <TouchableOpacity onPress={() => setIsModalVisible(true)}>
-              <View style={styles.languageButton}>
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>App Settings</Text>
+            {renderSettingItem(
+              'language-outline',
+              'App Language',
+              <TouchableOpacity onPress={() => setIsModalVisible(true)} style={styles.languageButton}>
                 <Text style={[styles.languageButtonText, { color: theme.colors.primary }]}>{selectedLanguage}</Text>
                 <Ionicons name="chevron-forward" size={20} color={theme.colors.primary} />
-              </View>
-            </TouchableOpacity>
-          )}
-        </View>
+              </TouchableOpacity>
+            )}
+          </View>
 
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>App Permissions</Text>
-          {renderSettingItem(
-            'location-outline',
-            'Location Access',
-            <TouchableOpacity onPress={requestLocationPermission}>
-              <View style={styles.permissionStatus}>
-                <Text style={[styles.permissionText, { color: theme.colors.primary }]}>
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>App Permissions</Text>
+            {renderSettingItem(
+              'location-outline',
+              'Location Access',
+              <TouchableOpacity onPress={requestLocationPermission} style={styles.permissionStatus}>
+                <Text style={[styles.permissionText, { color: locationPermission === 'granted' ? theme.colors.success : theme.colors.error }]}>
                   {locationPermission === 'granted' ? 'Enabled' : 'Disabled'}
                 </Text>
-                <Ionicons name="chevron-forward" size={24} color={theme.colors.text} />
-              </View>
-            </TouchableOpacity>
-          )}
-        </View>
-      </ScrollView>
+                <Ionicons name="chevron-forward" size={20} color={theme.colors.text} />
+              </TouchableOpacity>
+            )}
+          </View>
+        </ScrollView>
 
-      <AppLanguageSelectionScreen
-        isVisible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
-        onSelectLanguage={setSelectedLanguage}
-      />
+        <AppLanguageSelectionScreen
+          isVisible={isModalVisible}
+          onClose={() => setIsModalVisible(false)}
+          onSelectLanguage={setSelectedLanguage}
+        />
+      </View>
     </ScreenLayout>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    paddingTop: 60,
+    paddingHorizontal: 16,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 30,
+  },
+  scrollContainer: {
     flex: 1,
   },
   section: {
@@ -125,7 +138,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 12,
-    paddingHorizontal: 16,
   },
   settingItem: {
     flexDirection: 'row',
@@ -134,12 +146,18 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
   },
   settingItemLeft: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  settingIcon: {
+  iconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginRight: 16,
   },
   settingText: {
